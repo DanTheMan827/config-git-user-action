@@ -1,0 +1,43 @@
+name: Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    name: 'User Name: ${{ matrix.user_name }} — Prefer User Email: ${{ matrix.prefer_user_email }} — Use Real Name: ${{ matrix.use_real_name }} — Override Name: ${{ matrix.git_name}}'
+    strategy:
+      matrix:
+        user_name: ['octocat', 'dependabot']
+        prefer_user_email: [true, false]
+        use_real_name: [true, false]
+        git_name: ['John Doe', '']
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run custom action
+        id: action-with-token
+        uses: ./
+        with:
+          user_name: ${{ matrix.user_name }}
+          prefer_user_email: ${{ matrix.prefer_user_email }}
+          use_real_name: ${{ matrix.use_real_name }}
+          git_name: ${{ matrix.git_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Generate summary
+        shell: pwsh
+        run: |
+          $summary = @"
+          # Configured Info
+          - **Name:** ${{ steps.action-with-token.outputs.name }}
+          - **Email:** ${{ steps.action-with-token.outputs.email }}
+          "@
+          $summary | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8

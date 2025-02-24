@@ -1,0 +1,93 @@
+name: 'Configure Git for GitHub User'
+description: 'An action to configure git with the GitHub user information.'
+inputs:
+  user_name:
+    description: 'The GitHub username. If not provided, the current workflow actor will be used.'
+    required: false
+    default: ''
+  
+  git_name:
+    description: 'The override name to use for git.'
+    required: false
+    default: ''
+
+  use_real_name:
+    description: 'Prefer real name if available instead of the GitHub username. This has no effect if git_name is provided.'
+    required: false
+    default: true
+
+  prefer_user_email:
+    description: 'Prefer user email if available instead of noreply GitHub email.'
+    required: false
+    default: false
+
+  token:
+    description: 'The GitHub token to use for API requests. If not provided the action will be subject to unauthenticated rate limits.'
+    required: false
+    default: ''
+
+outputs:
+  name:
+    description: 'The configured git name'
+    value: ${{ steps.user_info.outputs.git_name }}
+
+  email:
+    description: 'The configured git email'
+    value: ${{ steps.user_info.outputs.git_email }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Get user info
+      id: user_info
+      shell: pwsh
+      run: |
+        if ("${{ inputs.token }}" -ne "") {
+          $headers = @{ Authorization = "token ${{ inputs.token }}" }
+        } else {
+          $headers = @{ }
+        }
+
+        $target_user_name = "${{ inputs.user_name }}"
+
+        if ("$target_user_name" -eq "") {
+          $target_user_name = "${{ github.actor }}"
+        }
+
+        $user_info = Invoke-RestMethod -Uri "https://api.github.com/users/$target_user_name" -Headers $headers
+
+        $user_name = $user_info.name
+        $user_email = $user_info.email
+        $user_id = $user_info.id
+        $user_login = $user_info.login
+
+        if ("${{ inputs.git_name }}" -ne "") {
+          $git_name = "${{ inputs.git_name }}"
+        } else {
+          $git_name = $user_login
+
+          if ("${{ inputs.use_real_name }}" -eq "true" -and "$user_name" -ne "") {
+            $git_name = $user_name
+          } else {
+            $git_name = $user_login
+          }
+        }
+
+        $git_email = "$user_id+$user_login@users.noreply.github.com"
+
+        if ("${{ inputs.prefer_user_email }}" -eq "true" -and "$user_email" -ne "") {
+          $git_email = $user_email
+        }
+
+        "git_name=$git_name" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        "git_email=$git_email" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+    - name: Configure git name
+      shell: pwsh
+      run: |
+        git config --global user.name "${{ steps.user_info.outputs.github_user_name }}"
+
+    - name: Configure git email
+      shell: pwsh
+      run: |
+        git config --global user.email "${{ steps.user_info.outputs.github_user_email }}"
