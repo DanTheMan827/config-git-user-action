@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Configure Git
-        uses: DanTheMan827/config-git-user-action@main
+        uses: DanTheMan827/config-git-user-action@v1
         with:
             user_name: 'octocat'
             use_real_name: true
