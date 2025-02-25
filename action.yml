@@ -85,9 +85,9 @@ runs:
     - name: Configure git name
       shell: pwsh
       run: |
-        git config --global user.name "${{ steps.user_info.outputs.github_user_name }}"
+        git config --global user.name "${{ steps.user_info.outputs.git_name }}"
 
     - name: Configure git email
       shell: pwsh
       run: |
-        git config --global user.email "${{ steps.user_info.outputs.github_user_email }}"
+        git config --global user.email "${{ steps.user_info.outputs.git_email }}"
