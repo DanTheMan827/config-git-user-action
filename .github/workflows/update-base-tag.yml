@@ -1,0 +1,44 @@
+name: Update Base Tag
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # triggers on tags like v1.0.2, v2.3.4, etc.
+
+jobs:
+  update-base-tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Extract base version
+        id: extract
+        run: |
+          # Remove the "refs/tags/" prefix to get the full tag, e.g., "v1.0.2"
+          full_tag="${GITHUB_REF#refs/tags/}"
+          echo "Full tag: $full_tag"
+
+          # Extract the base tag (everything before the first period)
+          base_tag="${full_tag%%.*}"
+          echo "Base tag: $base_tag"
+
+          # Set the base_tag as an output variable for later steps
+          echo "base_tag=$base_tag" >> "$GITHUB_OUTPUT"
+
+      - name: Configure Git
+        uses: ./
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create or update base tag
+        run: |
+          # Force-create (or update) the base tag to point to the current commit
+          git tag -f "${{ steps.extract.outputs.base_tag }}"
+          git push -f origin "${{ steps.extract.outputs.base_tag }}"
