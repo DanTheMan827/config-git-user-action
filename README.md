@@ -6,7 +6,7 @@ This GitHub Action configures git with the GitHub user information.
 
 | Name                | Description                                                                                                            | Required | Default |
 |---------------------|------------------------------------------------------------------------------------------------------------------------|----------|---------|
-| `user_name`         | The GitHub username. If not provided, the current workflow actor will be used.                                         | false    |         |
+| `user_name`         | The GitHub username. If not provided, the repository owner will be used.                                               | false    |         |
 | `git_name`          | The override name to use for git.                                                                                      | false    |         |
 | `use_real_name`     | Prefer real name if available instead of the GitHub username. This has no effect if `git_name` is provided.            | false    | true    |
 | `prefer_user_email` | Prefer user email if available instead of noreply GitHub email.                                                        | false    | false   |
