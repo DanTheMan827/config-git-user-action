@@ -34,8 +34,6 @@ jobs:
 
       - name: Configure Git
         uses: ./
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create or update base tag
         run: |
