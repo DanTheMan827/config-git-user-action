@@ -2,7 +2,7 @@ name: 'Configure Git for GitHub User'
 description: 'An action to configure git with the GitHub user information.'
 inputs:
   user_name:
-    description: 'The GitHub username. If not provided, the current workflow actor will be used.'
+    description: 'The GitHub username. If not provided, the repo owner will be used.'
     required: false
     default: ''
   
@@ -51,7 +51,7 @@ runs:
         $target_user_name = "${{ inputs.user_name }}"
 
         if ("$target_user_name" -eq "") {
-          $target_user_name = "${{ github.actor }}"
+          $target_user_name = "${{ github.repository_owner }}"
         }
 
         $user_info = Invoke-RestMethod -Uri "https://api.github.com/users/$target_user_name" -Headers $headers
