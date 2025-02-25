@@ -30,7 +30,6 @@ jobs:
           prefer_user_email: ${{ matrix.prefer_user_email }}
           use_real_name: ${{ matrix.use_real_name }}
           git_name: ${{ matrix.git_name }}
-          token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Generate summary
         shell: pwsh

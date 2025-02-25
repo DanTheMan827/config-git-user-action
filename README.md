@@ -10,7 +10,6 @@ This GitHub Action configures git with the GitHub user information.
 | `git_name`          | The override name to use for git.                                                                                      | false    |         |
 | `use_real_name`     | Prefer real name if available instead of the GitHub username. This has no effect if `git_name` is provided.            | false    | true    |
 | `prefer_user_email` | Prefer user email if available instead of noreply GitHub email.                                                        | false    | false   |
-| `token`             | The GitHub token to use for API requests. If not provided the action will be subject to unauthenticated rate limits.   | false    |         |
 
 ## Outputs
 
@@ -31,8 +30,6 @@ jobs:
       # This will configure git for the owner of the repository
       - name: Configure Git
         uses: DanTheMan827/config-git-user-action@v1
-        with:
-            token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ## How It Works
