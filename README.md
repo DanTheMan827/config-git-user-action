@@ -28,11 +28,10 @@ jobs:
   configure-git:
     runs-on: ubuntu-latest
     steps:
+      # This will configure git for the owner of the repository
       - name: Configure Git
         uses: DanTheMan827/config-git-user-action@v1
         with:
-            user_name: 'octocat'
-            use_real_name: true
             token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
