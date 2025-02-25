@@ -21,6 +21,11 @@ inputs:
     required: false
     default: false
 
+  token:
+    description: 'The GitHub token to use for API requests. If not provided the action will be subject to unauthenticated rate limits.'
+    required: false
+    default: ''
+
 outputs:
   name:
     description: 'The configured git name'
@@ -37,7 +42,11 @@ runs:
       id: user_info
       shell: pwsh
       run: |
-        $headers = @{ Authorization = "token ${{ secrets.GITHUB_TOKEN }}" }
+        if ("${{ inputs.token }}" -ne "") {
+          $headers = @{ Authorization = "token ${{ inputs.token }}" }
+        } else {
+          $headers = @{ }
+        }
 
         $target_user_name = "${{ inputs.user_name }}"
 
