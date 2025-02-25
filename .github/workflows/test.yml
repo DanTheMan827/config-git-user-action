@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - main
+      - '*'
 
 jobs:
   test:
@@ -12,7 +12,7 @@ jobs:
     name: 'User Name: ${{ matrix.user_name }} — Prefer User Email: ${{ matrix.prefer_user_email }} — Use Real Name: ${{ matrix.use_real_name }} — Override Name: ${{ matrix.git_name}}'
     strategy:
       matrix:
-        user_name: ['octocat', 'dependabot']
+        user_name: ['octocat', 'dependabot', '']
         prefer_user_email: [true, false]
         use_real_name: [true, false]
         git_name: ['John Doe', '']
